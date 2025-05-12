@@ -87,8 +87,11 @@ for message in st.session_state.messages:
                 st.write("Sources:")
             elif message["content"]["type"] == "text":
                 st.write(message["content"]["content"])
-                for source in message["content"]["sources"]:
-                    st.write(f"- {source}")
+                
+                if "sources" in message["content"]:
+                    for source in message["content"]["sources"]:
+                        st.write(f"- {source}")
+
             
             elif message["content"]["type"] == "image_analysis":
                 st.write(message["content"]["description"])
@@ -163,7 +166,10 @@ if user_input:
                     st.write("Sources:")
                     for source in response["sources"]:
                         st.write(f"- {source}")
-                
+
+                elif response["type"] == "text":  
+                    st.write(response["content"])
+
                 elif response["type"] == "error":
                     st.error(response["message"])
             else:
