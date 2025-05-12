@@ -105,33 +105,24 @@ for message in st.session_state.messages:
             elif message["content"]["type"] == "error":
                 st.error(message["content"]["message"])
         else:
-            # Regular text message
             st.write(message["content"])
 
-# Process uploaded files
 if uploaded_file:
-    # Determine file type
     file_type = uploaded_file.name.split('.')[-1].lower()
     
-    # Process based on file type
     if file_type in ['jpg', 'jpeg', 'png', 'gif']:
-        # Display the uploaded image
         st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
         if st.button("Analyze Image"):
-            # Add to chat
             st.session_state.messages.append({"role": "user", "content": f"📷 Uploaded an image: {uploaded_file.name}"})
             
-            # Process the image
             response = command_parser.image_analyzer.analyze(uploaded_file)
             st.session_state.messages.append({"role": "assistant", "content": response})
             st.rerun()
     
     elif file_type == 'pdf':
         if st.button("Process PDF"):
-            # Add to chat
             st.session_state.messages.append({"role": "user", "content": f"📄 Uploaded a PDF: {uploaded_file.name}"})
             
-            # Process the PDF
             response = command_parser.pdf_processor.process(uploaded_file, user_id=st.session_state.user_id)
             st.session_state.messages.append({"role": "assistant", "content": response})
             st.rerun()
@@ -140,22 +131,17 @@ if uploaded_file:
 user_input = st.chat_input("Type a message...")
 
 if user_input:
-    # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": user_input})
     
-    # Display user message
     with st.chat_message("user"):
         st.write(user_input)
     
-    # Process the command
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             response = command_parser.parse_command(user_input, st.session_state.user_id)
             
-            # Add assistant response to chat history
             st.session_state.messages.append({"role": "assistant", "content": response})
             
-            # Display response
             if isinstance(response, dict) and "type" in response:
                 if response["type"] == "image":
                     st.image(response["url"], caption=response["prompt"])
