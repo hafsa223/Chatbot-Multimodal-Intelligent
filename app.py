@@ -85,6 +85,8 @@ for message in st.session_state.messages:
             elif message["content"]["type"] == "search_result":
                 st.write(message["content"]["summary"])
                 st.write("Sources:")
+            elif message["content"]["type"] == "text":
+                st.write(message["content"]["content"])
                 for source in message["content"]["sources"]:
                     st.write(f"- {source}")
             
@@ -119,7 +121,7 @@ if uploaded_file:
             # Process the image
             response = command_parser.image_analyzer.analyze(uploaded_file)
             st.session_state.messages.append({"role": "assistant", "content": response})
-            st.experimental_rerun()
+            st.rerun()
     
     elif file_type == 'pdf':
         if st.button("Process PDF"):
@@ -127,9 +129,9 @@ if uploaded_file:
             st.session_state.messages.append({"role": "user", "content": f"📄 Uploaded a PDF: {uploaded_file.name}"})
             
             # Process the PDF
-            response = command_parser.pdf_processor.process(uploaded_file)
+            response = command_parser.pdf_processor.process(uploaded_file, user_id=st.session_state.user_id)
             st.session_state.messages.append({"role": "assistant", "content": response})
-            st.experimental_rerun()
+            st.rerun()
 
 # Chat input
 user_input = st.chat_input("Type a message...")

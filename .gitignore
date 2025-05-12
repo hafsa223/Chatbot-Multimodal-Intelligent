@@ -172,3 +172,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Base de données locale Postgres
+postgres/
+pgdata/
+*.db

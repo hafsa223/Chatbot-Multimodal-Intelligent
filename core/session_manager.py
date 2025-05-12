@@ -36,3 +36,12 @@ class SessionManager:
         if session_id in self.sessions:
             self.sessions[session_id]["history"] = []
             self.sessions[session_id]["last_active"] = datetime.now()
+    
+    def get_latest_file(self, session_id):
+        """Retourne le dernier fichier PDF uploadé dans cette session"""
+        if session_id in self.sessions:
+            history = self.sessions[session_id]["history"]
+            for item in reversed(history):  # On regarde depuis le plus récent
+                if isinstance(item, dict) and "file" in item and item["file"].name.endswith(".pdf"):
+                    return item["file"]
+        return None
