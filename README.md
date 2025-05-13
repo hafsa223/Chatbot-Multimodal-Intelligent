@@ -1,16 +1,16 @@
 
-# EduBot 🧠📚 – Assistant Intelligent pour l'Éducation
+# EduBot  – Assistant Intelligent pour l'Éducation
 
 EduBot est une application NLP interactive développée en Python et Streamlit. Elle agit comme un tuteur virtuel capable d’analyser des documents pédagogiques, de répondre à des questions d’étudiants, de générer des résumés, des QCMs, des supports visuels et même de vocaliser les réponses. 🧑‍🏫🤖
 
 ---
 
-## 🎯 Objectif
+##  Objectif
 Fournir un assistant éducatif intelligent basé sur l'IA (OpenAI/Mistral) avec des capacités de recherche RAG, de traitement de documents PDF, d’analyse d’images, d’audio et de génération de contenus pédagogiques.
 
 ---
 
-## 🚀 Fonctionnalités principales
+##  Fonctionnalités principales
 
 - ✅ Upload et analyse de fichiers PDF (cours, sujets d’examens)
 - ✅ Résumé de contenu + explications simplifiées
@@ -25,7 +25,7 @@ Fournir un assistant éducatif intelligent basé sur l'IA (OpenAI/Mistral) avec 
 
 ---
 
-## 🧱 Architecture du projet
+##  Architecture du projet
 
 ```
 ├── app.py                    # Interface principale Streamlit
@@ -53,7 +53,7 @@ Fournir un assistant éducatif intelligent basé sur l'IA (OpenAI/Mistral) avec 
 
 ---
 
-## 🔧 Installation
+##  Installation
 
 ```bash
 git clone https://github.com/votre-utilisateur/EduBot.git
@@ -71,7 +71,7 @@ MISTRAL_API_KEY=your_mistral_key
 
 ---
 
-## 📌 Lancement
+##  Lancement
 
 ```bash
 streamlit run app.py
@@ -79,9 +79,11 @@ streamlit run app.py
 
 ---
 
-## ✍️ Auteurs
+##  Auteurs
 
 - Hafsa Moumni
+- Sadiya Niang
+- Mourad Amoussa
 - Projet encadré à Ynov, Master 1 Data Science
 
 ---
