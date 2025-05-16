@@ -36,3 +36,11 @@ class SessionManager:
         if session_id in self.sessions:
             self.sessions[session_id]["history"] = []
             self.sessions[session_id]["last_active"] = datetime.now()
+    
+
+    def clear_session(self, session_id):
+        """Clear the session data for a given session ID"""
+        if session_id in self.sessions:
+            del self.sessions[session_id]
+            return True
+        return False
