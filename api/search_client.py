@@ -4,8 +4,8 @@ from api.openai_client import OpenAIClient
 
 class SearchClient:
     def __init__(self):
-        self.api_key = os.getenv("SEARCH_API_KEY", "")
-        self.search_engine_id = os.getenv("SEARCH_ENGINE_ID", "e579568126f5f4fd1")
+        self.api_key = os.getenv("SEARCH_API_KEY")
+        self.search_engine_id = os.getenv("SEARCH_ENGINE_ID")
         self.openai_client = OpenAIClient()
    
     def search(self, query, num_results=5):
