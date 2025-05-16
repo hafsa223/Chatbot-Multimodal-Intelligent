@@ -3,6 +3,7 @@ import os
 import requests
 import openai
 from api.openai_client import OpenAIClient
+import streamlit as st
 
 class AudioProcessor:
     def __init__(self):
@@ -13,7 +14,7 @@ class AudioProcessor:
         try:
             # Transcribe the audio using OpenAI's Whisper API
             transcription = self.openai_client.transcribe_audio(audio_file)
-            
+            st.session_state.messages.append({"role": "user", "content": f"🎤 Transcription: {transcription}"})
             # Generate a response to the transcribed text
             response = self.openai_client.generate_response(
                 transcription,

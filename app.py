@@ -4,6 +4,10 @@ from dotenv import load_dotenv
 import tempfile
 import base64
 from io import BytesIO
+import tempfile
+from core.command_parser import CommandParser
+from core.session_manager import SessionManager
+from services.rag_engine import RAGEngine
 
 # Set page config - MUST BE THE FIRST STREAMLIT COMMAND
 st.set_page_config(
@@ -12,8 +16,6 @@ st.set_page_config(
     layout="wide"
 )
 
-from core.command_parser import CommandParser
-from core.session_manager import SessionManager
 
 # Load environment variables
 load_dotenv()
@@ -27,12 +29,6 @@ def initialize_components():
 
 session_manager, command_parser = initialize_components()
 
-# Initialize session state
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-    
-if "user_id" not in st.session_state:
-    st.session_state.user_id = session_manager.create_session()
 
 # Function to autoplay audio
 def autoplay_audio(file_path):
@@ -46,25 +42,28 @@ def autoplay_audio(file_path):
     """
     st.markdown(md, unsafe_allow_html=True)
 
-# App title and description
-st.title("📚 EduBot - Ton Assistant Intelligent pour les Études")
+
 st.markdown("""
-EduBot t'aide à apprendre plus efficacement en analysant tes documents de cours, 
-en répondant à tes questions et en créant des fiches de révision personnalisées.
-""")
+<div style="background-color:#4CAF50; padding:15px; border-radius:10px; text-align:center;">
+    <h1 style="color:white;">📚 EduBot - Ton Assistant Intelligent pour les Études</h1>
+    <p style="color:white; font-size:20px;">EduBot t'aide à apprendre plus efficacement en analysant tes documents de cours,
+    en répondant à tes questions et en créant des fiches de révision personnalisées.</p>
+</div>
+""", unsafe_allow_html=True)
+
+
 
 # Sidebar with features
 with st.sidebar:
-    st.header("Fonctionnalités")
-    st.markdown("""
-    - **Analyse de PDF** - Upload tes cours pour les résumer
-    - **Questions sur le contenu** - Pose des questions sur tes documents
-    - **Analyse d'images** - Comprend tes schémas et diagrammes
-    - **Quiz automatique** - Génère des QCM pour tester tes connaissances
-    - **Mode vocal** - Parle avec EduBot et écoute ses réponses
-    - **Fiches de révision** - Crée des fiches personnalisées
-    """)
+
     
+    theme_choice = st.radio("Choisir un thème :", ["Light Mode", "Dark Mode"])
+    if theme_choice == "Light Mode":
+        st.info("Pour activer le mode clair, modifiez le fichier `config.toml` et définissez `[theme] base = 'light'`.")
+    elif theme_choice == "Dark Mode":
+        st.info("Pour activer le mode sombre, modifiez le fichier `config.toml` et définissez `[theme] base = 'dark'`.")
+
+
     # Audio feature section
     st.header("Mode Vocal 🎤")
     
@@ -87,7 +86,7 @@ with st.sidebar:
                         response = command_parser.audio_processor.process_audio(audio_file)
                         
                     # Add transcription to chat
-                    st.session_state.messages.append({"role": "user", "content": f"🎤 {response['transcription']}"})
+                    #st.session_state.messages.append({"role": "user", "content": f"🎤 {response['transcription']}"})
                     st.session_state.messages.append({"role": "assistant", "content": response['response']})
                    
                     # Clean up temp file
@@ -98,6 +97,14 @@ with st.sidebar:
     # File uploader for PDFs and images
     st.header("Upload de Documents 📄")
     uploaded_file = st.file_uploader("Upload un PDF ou une image", type=["pdf", "jpg", "jpeg", "png"])
+
+
+# Initialize session state
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+    
+if not uploaded_file and "user_id" not in st.session_state:
+    st.session_state.user_id = session_manager.create_session()
 
 # Check if we need to play audio after a rerun
 if "play_audio" in st.session_state and st.session_state.play_audio:
@@ -118,11 +125,17 @@ for message in st.session_state.messages:
                 st.image(message["content"]["url"], caption=message["content"]["prompt"])
                 st.write(f"Image générée basée sur: {message['content']['prompt']}")
             
+            
             elif message["content"]["type"] == "search_result":
                 st.write(message["content"]["summary"])
                 st.write("Sources:")
-                for source in message["content"]["sources"]:
-                    st.write(f"- {source}")
+            elif message["content"]["type"] == "text":
+                st.write(message["content"]["content"])
+            
+                if "sources" in message["content"]:
+                    for source in message["content"]["sources"]:
+                        st.write(f"- {source}")
+            
             
             elif message["content"]["type"] == "image_analysis":
                 st.write(message["content"]["description"])
@@ -143,30 +156,40 @@ for message in st.session_state.messages:
 if uploaded_file:
     # Determine file type
     file_type = uploaded_file.name.split('.')[-1].lower()
-    
+
+
     # Process based on file type
     if file_type in ['jpg', 'jpeg', 'png', 'gif']:
-        # Display the uploaded image
-        st.image(uploaded_file, caption="Image téléchargée", use_column_width=True)
-        if st.button("Analyser l'image"):
-            # Add to chat
-            st.session_state.messages.append({"role": "user", "content": f"📷 Image téléchargée: {uploaded_file.name}"})
-            
-            # Process the image
-            response = command_parser.image_analyzer.analyze(uploaded_file)
-            st.session_state.messages.append({"role": "assistant", "content": response})
-            st.rerun()
+        with st.chat_message("user"):
+            st.write("Uploaded Image")
+            st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
+
+        with st.chat_message("assistant"):
+            with st.spinner("Analyzing the image..."):
+                        #st.session_state.messages.append({"role": "user", "content": f"📷 Image téléchargée: {uploaded_file.name}"})
+                    response = command_parser.image_analyzer.analyze(uploaded_file)
+                    st.write(response)
+                    st.session_state.messages.append({"role": "assistant", "content": response})
+                    #st.rerun()
+    
     
     elif file_type == 'pdf':
-        if st.button("Analyser le PDF"):
-            # Add to chat
-            st.session_state.messages.append({"role": "user", "content": f"📄 PDF téléchargé: {uploaded_file.name}"})
-            
-            # Process the PDF
-            response = command_parser.pdf_processor.process(uploaded_file)
-            st.session_state.messages.append({"role": "assistant", "content": response})
-            st.rerun()
+        with st.chat_message("user"):
+            st.write("Uploaded PDF")
+            #st.session_state.messages.append({"role": "assistant", "content": f" Uploaded PDF: {uploaded_file.name}"})
 
+        with st.chat_message("assistant"):
+            with st.spinner("Analyzing the PDF..."):
+                if st.button("Process PDF"):
+                    st.session_state.messages.append({"role": "user", "content": f"📄 Uploaded a PDF: {uploaded_file.name}"})
+                    
+                    response = command_parser.pdf_processor.process(uploaded_file, user_id=st.session_state.user_id)
+                    st.write(response["summary"])
+                    st.session_state.messages.append({"role": "assistant", "content": response})
+                    #st.rerun()
+    
+    
+# Display chat history
 # Chat input
 user_input = st.chat_input("Pose ta question à EduBot...")
 
@@ -189,8 +212,10 @@ if user_input:
             # Display response
             if isinstance(response, dict) and "type" in response:
                 if response["type"] == "image":
-                    st.image(response["url"], caption=response["prompt"])
-                    st.write(f"Image générée basée sur: {response['prompt']}")
+                    st.image(response["image"], caption=response["prompt"])
+                    st.write(f"Image generated based on: {response['prompt']}")
+                    st.session_state.messages.append({"role": "assistant", "content": f"🖼️ Generating image for prompt: {response['prompt']}"})
+        
                 
                 elif response["type"] == "search_result":
                     st.write(response["summary"])
@@ -198,8 +223,10 @@ if user_input:
                     for source in response["sources"]:
                         st.write(f"- {source}")
                 
+                elif response["type"] == "text":  
+                    st.write(response["content"])
+
                 elif response["type"] == "error":
                     st.error(response["message"])
             else:
                 st.write(response)
-                
