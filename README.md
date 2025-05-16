@@ -121,7 +121,7 @@ L'application inclut également un mode vocal pour interagir avec EduBot en util
 
 ### 1. Cloner le dépôt
 ```bash
-git clone git@github.com:Datascience-Ynov/Chatbot-Multimodal-Intelligent.git
+git clone https://github.com/hafsa223/Chatbot-Multimodal-Intelligent/tree/main
 cd Chatbot-Multimodal-Intelligent
 ```
 
