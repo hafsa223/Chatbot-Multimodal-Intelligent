@@ -1,0 +1,3 @@
+OPENAI_API_KEY = votre clé API openAI
+SEARCH_API_KEY = "AIzaSyAKDkmSmUzlThoGa5aMTxMNJuGSpdO6QtQ" exemple de search clé
+SEARCH_ENGINE_ID = e579568126f5f4fd1
