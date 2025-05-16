@@ -8,3 +8,4 @@ streamlit
 Markdown
 PyMuPDF
 chromadb
+pysqlite3-binary
