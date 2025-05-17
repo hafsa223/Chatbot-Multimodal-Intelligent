@@ -132,9 +132,12 @@ pip install -r requirements.txt
 ```
 
 ### 3. Configurer les variables d'environnement
-Créez un fichier `.env` à la racine du projet et ajoutez votre clé API OpenAI :
+Créez un fichier `.env` à la racine du projet et ajoutez :
+
 ```
-OPENAI_API_KEY=your_openai_api_key
+OPENAI_API_KEY= your_openai_api_key
+SEARCH_API_KEY = your_search_key
+SEARCH_ENGINE_ID = your_search_engine_id (ou vous pouvez utilisier celui ci comme test: e579568126f5f4fd1)
 ```
 OU:
 
@@ -150,6 +153,8 @@ self.api_key = os.getenv("OPENAI_API_KEY", "")
 self.api_key = os.getenv("SEARCH_API_KEY", "")
 ```
 - **NB: Les deux clés API sont différentes.**
+
+**
 
 ### 4. 📌 Lancer l'application
 Exécutez l'application Streamlit avec la commande suivante :
